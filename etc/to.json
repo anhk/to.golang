@@ -1,0 +1,12 @@
+{
+	"anhk.cc": {
+		"Addr": "anhk.cc",
+		"Port": 2222,
+		"User": "root"
+	},
+	"ir0.cn": {
+		"Addr": "ir0.cn",
+		"Port": 22,
+		"User": "root"
+	}
+}
