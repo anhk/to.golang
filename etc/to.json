@@ -7,6 +7,8 @@
 	"ir0.cn": {
 		"Addr": "ir0.cn",
 		"Port": 22,
-		"User": "root"
+		"User": "root",
+		"Password": "",
+		"Tag": "测试主机"
 	}
 }
