@@ -17,6 +17,7 @@ type Server struct {
 	User     string `json:"user,omitempty"`
 	Password string `json:"password,omitempty"`
 	Tag      string `json:"tag,omitempty"`
+	Jumper   string `json:"jumper,omitempty"`
 }
 
 func (s *Server) Show(name string) {
@@ -24,10 +25,21 @@ func (s *Server) Show(name string) {
 }
 
 func (s *Server) command() *exec.Cmd {
+	var args []string
+
 	if s.Password == "" {
-		return exec.Command("ssh", s.User+"@"+s.Addr, "-p", strconv.Itoa(s.Port))
+		args = append(args, "ssh")
+	} else {
+		args = append(args, "sshpass", "-p", s.Password, "ssh")
 	}
-	return exec.Command("sshpass", "-p", s.Password, "ssh", s.User+"@"+s.Addr, "-p", strconv.Itoa(s.Port))
+
+	if s.Jumper != "" {
+		args = append(args, "-J", s.Jumper)
+	}
+
+	args = append(args, s.User+"@"+s.Addr, "-p", strconv.Itoa(s.Port))
+	//fmt.Println(args)
+	return exec.Command(args[0], args[1:]...)
 }
 
 func (s *Server) Run() {
