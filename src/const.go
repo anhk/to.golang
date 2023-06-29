@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -18,6 +19,8 @@ type Server struct {
 	Password string `json:"password,omitempty"`
 	Tag      string `json:"tag,omitempty"`
 	Jumper   string `json:"jumper,omitempty"`
+
+	Regex bool `json:"regex,omitempty"` // 是否使用正则匹配，如果是正则匹配的话，则针对该节点禁用前缀查询
 }
 
 func (s *Server) Show(name string) {
@@ -94,9 +97,15 @@ func (sl *ServerList) Show() {
 
 func (sl *ServerList) Find(target string) *Server {
 	for _, idx := range sl.names {
-		if strings.HasPrefix(idx, target) {
-			target = idx
+		if sl.list[idx].Regex {
+			fmt.Println("idx:", idx)
+			if m := regexp.MustCompile(idx); m.MatchString(target) {
+				sl.list[idx].Addr = target
+				return sl.list[idx]
+			}
+		} else if strings.HasPrefix(idx, target) {
+			return sl.list[idx]
 		}
 	}
-	return sl.list[target]
+	return nil
 }
