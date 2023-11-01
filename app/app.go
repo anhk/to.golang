@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/rivo/tview"
+	"time"
 )
 
 // ┌───────────────────────────Search────────────────────────────────┐
@@ -53,22 +54,34 @@ func NewApp() *App {
 
 	this.mainPanel = tview.NewFlex()
 	this.mainPanel.SetBorder(true).SetTitle(" Main ")
-	this.mainPanel.AddItem(list, 0, 1, false)
+	this.mainPanel.AddItem(list, 0, 1, true)
 
 	this.helpPanel = tview.NewFlex()
 	this.helpPanel.SetBorder(true).SetTitle(" Help ")
 
 	this.screen = tview.NewFlex().SetDirection(tview.FlexRow)
 	this.screen. //AddItem(this.searchPanel, 3, 3, false).
-			AddItem(this.mainPanel, 0, 8, false).
-			AddItem(this.helpPanel, 0, 1, false)
+			AddItem(this.mainPanel, 0, 8, true).
+			AddItem(this.helpPanel, 4, 0, false)
 
-	this.screen.RemoveItem(this.searchPanel)
+	//this.screen.RemoveItem(this.searchPanel)
 	this.app = tview.NewApplication().SetRoot(this.screen, true).EnableMouse(true)
+	//this.screen.AddItem(this.searchPanel, 3, 3, true)
+	//this.app.SetFocus(this.searchPanel)
 
 	return this
 }
 
 func (app *App) Run() {
+
+	go func() {
+		time.Sleep(3 * time.Second)
+		app.screen.Clear()
+		app.screen.AddItem(app.searchPanel, 3, 0, true)
+		app.screen.AddItem(app.mainPanel, 0, 8, false)
+		app.screen.AddItem(app.helpPanel, 4, 0, false)
+		app.app.SetFocus(app.searchPanel)
+		app.app.Draw()
+	}()
 	_ = app.app.Run()
 }
