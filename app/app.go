@@ -2,7 +2,6 @@ package app
 
 import (
 	"github.com/rivo/tview"
-	"time"
 )
 
 // ┌───────────────────────────Search────────────────────────────────┐
@@ -29,23 +28,30 @@ import (
 type App struct {
 	searchPanel *tview.InputField
 	mainPanel   *tview.Flex
-	helpPanel   *tview.Flex
+	helpPanel   *tview.TextView
 
 	screen *tview.Flex
 	app    *tview.Application
+
+	servers ServerList
 }
 
 func NewApp() *App {
 	this := &App{}
+	this.servers.Load("/usr/local/etc/to.json")
 
 	list := tview.NewList().ShowSecondaryText(false)
-	list.AddItem("192.168.64.53   ---   (root)", "", '3', func() {
-		//a, b := list.GetItemText(list.GetCurrentItem())
-		//fmt.Println(a, b)
-	}).AddItem("192.168.64.52   ---   (root)", "", '4', func() {
-		//a, b := list.GetItemText(list.GetCurrentItem())
-		//fmt.Println(a, b)
-	})
+
+	for _, name := range this.servers.names {
+		list.AddItem(this.servers.list[name].String(name), "", rune(0), func() {})
+	}
+	//list.AddItem("192.168.64.53   ---   (root)", "", '3', func() {
+	//	//a, b := list.GetItemText(list.GetCurrentItem())
+	//	//fmt.Println(a, b)
+	//}).AddItem("192.168.64.52   ---   (root)", "", '4', func() {
+	//	//a, b := list.GetItemText(list.GetCurrentItem())
+	//	//fmt.Println(a, b)
+	//})
 	this.searchPanel = tview.NewInputField().SetAutocompletedFunc(func(text string, index int, source int) bool {
 		return false
 	})
@@ -56,7 +62,7 @@ func NewApp() *App {
 	this.mainPanel.SetBorder(true).SetTitle(" Main ")
 	this.mainPanel.AddItem(list, 0, 1, true)
 
-	this.helpPanel = tview.NewFlex()
+	this.helpPanel = tview.NewTextView()
 	this.helpPanel.SetBorder(true).SetTitle(" Help ")
 
 	this.screen = tview.NewFlex().SetDirection(tview.FlexRow)
@@ -74,14 +80,14 @@ func NewApp() *App {
 
 func (app *App) Run() {
 
-	go func() {
-		time.Sleep(3 * time.Second)
-		app.screen.Clear()
-		app.screen.AddItem(app.searchPanel, 3, 0, true)
-		app.screen.AddItem(app.mainPanel, 0, 8, false)
-		app.screen.AddItem(app.helpPanel, 4, 0, false)
-		app.app.SetFocus(app.searchPanel)
-		app.app.Draw()
-	}()
+	//go func() {
+	//	time.Sleep(3 * time.Second)
+	//	app.screen.Clear()
+	//	app.screen.AddItem(app.searchPanel, 3, 0, true)
+	//	app.screen.AddItem(app.mainPanel, 0, 8, false)
+	//	app.screen.AddItem(app.helpPanel, 4, 0, false)
+	//	app.app.SetFocus(app.searchPanel)
+	//	app.app.Draw()
+	//}()
 	_ = app.app.Run()
 }
