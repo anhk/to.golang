@@ -23,8 +23,12 @@ type Server struct {
 	Regex bool `json:"regex,omitempty"` // 是否使用正则匹配，如果是正则匹配的话，则针对该节点禁用前缀查询
 }
 
-func (s *Server) Show(name string) {
-	fmt.Printf("\033[0;32m%-10s\033[0m\t\033[0;31m%v\033[0m: %s@%s:%d\n", s.Tag, name, s.User, s.Addr, s.Port)
+func (s *Server) Show(name string, withPassword bool) {
+	fmt.Printf("\033[0;32m%-10s\033[0m\t\033[0;31m%v\033[0m: %s@%s:%d", s.Tag, name, s.User, s.Addr, s.Port)
+	if withPassword && s.Password != "" {
+		fmt.Printf("  \033[0;33m[%s]\033[0m", s.Password)
+	}
+	fmt.Println()
 }
 
 func (s *Server) command() *exec.Cmd {
@@ -86,12 +90,12 @@ func (sl *ServerList) sortName() {
 	sort.Strings(sl.names)
 }
 
-func (sl *ServerList) Show() {
+func (sl *ServerList) Show(withPassword bool) {
 	fmt.Println("\033[0;32mMy ConfigFile: ", cfgFile, "\033[0m")
 	fmt.Println("----------------------------------------------------")
 	for _, idx := range sl.names {
 		server := sl.list[idx]
-		server.Show(idx)
+		server.Show(idx, withPassword)
 	}
 }
 

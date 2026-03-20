@@ -6,7 +6,10 @@ OBJ = to
 default: $(OBJ)
 
 $(OBJ):
-	go build -gcflags "-N -l" -o $@ ./src
+	go build -mod=vendor -gcflags "-N -l" -o $@ ./src
+
+vendor:
+	go mod vendor
 
 clean:
 	rm -fr $(OBJ)
